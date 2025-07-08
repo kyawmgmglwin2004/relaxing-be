@@ -79,7 +79,12 @@ class UserApiController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::find($id);
+        return response()->json([
+            'status' => 'Success',
+            'message' => 'profile',
+            'user' => $user
+        ], 200);
     }
 
     /**
@@ -87,7 +92,49 @@ class UserApiController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
+        $existUser = User::where('email', $request->email)->first();
+        if(!$existUser){ 
+             $validator = validator(request()->all(), [
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'password' => 'required',
+            // 'role_id' => 'required',
+            // 'photo' => 'required'
+        ]);
+        if($validator->fails()) {
+            return response()->json([
+                "status"=>"error",
+                "message" => "Validation failed",
+                "errors" => $validator->errors()],
+                 409);
+        }
+        $user = User::find($id);
+        $user->email = request()->email;
+        $user->name = request()->name;
+        $user->phone = request()->phone;
+        $user->password = request()->password;
+        
+        
+        if(request()->file('photo')) {
+            $photoPath = request()->file('photo')->store('user_photos', 'public');
+            $user->photo = $photoPath;
+        }else {
+            $user->photo = null;
+        }
+        $user->save();
+        return response()->json([
+            'statur' => 'success',
+            'user' => 'Profile update Succeffully', 
+            'user' => $user], 200);
+        }else{
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User Already Existing',
+                // 'uers' => $existUser
+            ], 422);
+        }
     }
 
     /**
@@ -95,6 +142,19 @@ class UserApiController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::find($id);
+        $existId = User::where('id', $id)->first();
+        if($existId){
+             $user->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Delete user Succeffully'
+        ], 200); 
+        }else{
+            return response()->json([
+                'status' => false,
+                'message' => 'Dont have user with this ID',
+            ], 404);
+        }
     }
 }
