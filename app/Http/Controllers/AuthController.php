@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 
+use function Laravel\Prompts\error;
 
 class AuthController extends Controller
 {
@@ -23,5 +24,20 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
         ]);
         
+    }
+    public function logout(Request $request)
+    {
+       try {
+         $request->user()->currentAccessToken()->delete();
+        
+        return response()->json([
+            'message'=> 'Logout success & token delete',
+
+        ], 200);
+       } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Fail Logout! Please try again.'
+        ], 400);
+       }
     }
 }

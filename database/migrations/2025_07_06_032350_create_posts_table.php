@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('content');
             $table->integer('category_id');
             $table->integer('reaction');
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

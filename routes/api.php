@@ -1,10 +1,13 @@
 <?php
+
+use App\Http\Controllers\Api\PostApiController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserApiController;
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 // Route::middleware('auth:sanctum')->get('/user', [UserApiController::class, 'index'];
 // });
 // Route::apiResource('/user', UserApiController::class)->middleware('auth:sanctum');
@@ -15,3 +18,8 @@ Route::post('/user/{id}', [UserApiController::class, 'update'])->middleware('aut
 Route::delete('/user/{id}', [UserApiController::class, 'destroy'])->middleware('auth:sanctum');
 
 Route::get('/user/{id}', [UserApiController::class, 'show'])->middleware('auth:sanctum');
+Route::get('/posts', [PostApiController::class, 'index'])->middleware('auth:sanctum');
+Route::post('/posts', [PostApiController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/posts/{id}', [PostApiController::class, 'show'])->middleware('auth:sanctum');
+Route::delete('/posts/{id}', [PostApiController::class, 'destroy'])->middleware('auth:sanctum');
+Route::post('/posts/{id}', [PostApiController::class, 'update'])->middleware('auth:sanctum');

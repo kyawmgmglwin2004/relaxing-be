@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Dotenv\Validator;
 use GuzzleHttp\Psr7\Message;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class UserApiController extends Controller
 {
@@ -14,9 +17,11 @@ class UserApiController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $user = User::all();
-        return response()->json([$user], 200);
+    {  
+        $user = User::latest()->take(10)->get();
+        return response()->json([
+            'status'=> true,
+            $user], 200);
     }
 
     /**
@@ -56,7 +61,7 @@ class UserApiController extends Controller
         }
         $user->save();
         return response()->json([
-            'statur' => 'success',
+            'status' => 'success',
             'user' => 'Register Succeffully', 
             'user' => $user], 201);
            
